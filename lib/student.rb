@@ -7,6 +7,11 @@ class Student
       @grade = grade
   end
 
+  def self.wrapper(db, n = nil)
+    ob = db.map { |row| self.new_from_db(row) }
+    n ? ob.first(n) : ob
+  end
+
   def self.new_from_db(row)
     # create a new Student object given a row from the database
     ho = self.new(row[1], row[2], row[0])
@@ -22,8 +27,7 @@ class Student
   def self.find_by_name(name)
     # find the student in the database given a name
     # return a new instance of the Student class
-    DB[:conn].execute("SELECT * FROM students WHERE name = ? LIMIT 1;", name).map {
-       |row| self.new_from_db(row) }.first
+    DB[:conn].execute("SELECT * FROM students WHERE name = ? LIMIT 1;", name).map { |row| self.new_from_db(row) }.first
   end
   
   def save
